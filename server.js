@@ -1,12 +1,42 @@
-{
-  "name": "motivation-api",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
-  }
-}
+// server.js
+const express = require('express');
+const fs = require('fs');
+const cors = require('cors');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(cors());
+
+app.get('/random-video', (req, res) => {
+  fs.readFile('videos.json', 'utf8', (err, data) => {
+    if (err) return res.status(500).send('Error reading JSON');
+
+    const videos = JSON.parse(data);
+    const randomIndex = Math.floor(Math.random() * videos.length);
+    const selected = videos[randomIndex];
+
+    // اقتباسات مؤقتة
+    const quotes = [
+      {
+        ar: "ثق بنفسك، فأنت أقوى مما تظن!",
+        en: "Believe in yourself — you're stronger than you think!"
+      },
+      {
+        ar: "النجاح يبدأ بخطوة، فابدأ الآن!",
+        en: "Success begins with a step — start now!"
+      }
+    ];
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+
+    res.json({
+      title: selected.title,
+      video_url: selected.video_url,
+      quote_ar: quote.ar,
+      quote_en: quote.en
+    });
+  });
+});
+
+app.listen(port, () => {
+  console.log(`API running on port ${port}`);
+});
