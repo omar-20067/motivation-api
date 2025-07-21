@@ -1,42 +1,42 @@
 // server.js
-const express = require('express');
-const fs = require('fs');
-const cors = require('cors');
+const express = require("express");
 const app = express();
-const port = process.env.PORT || 3000;
 
-app.use(cors());
+const videos = [
+  "https://raw.githubusercontent.com/omar-20067/motivation-videos/main/1.mp4",
+  "https://raw.githubusercontent.com/omar-20067/motivation-videos/main/2.mp4",
+  "https://raw.githubusercontent.com/omar-20067/motivation-videos/main/3.mp4"
+];
 
-app.get('/random-video', (req, res) => {
-  fs.readFile('videos.json', 'utf8', (err, data) => {
-    if (err) return res.status(500).send('Error reading JSON');
+const quotes = [
+  {
+    quote_ar: "ثق بنفسك، فأنت أقوى مما تظن!",
+    quote_en: "Believe in yourself — you're stronger than you think!"
+  },
+  {
+    quote_ar: "النجاح لا يأتي صدفة، بل بصبر وعمل.",
+    quote_en: "Success doesn't come by chance, but by patience and work."
+  },
+  {
+    quote_ar: "ابدأ الآن، لا تنتظر اللحظة المثالية.",
+    quote_en: "Start now, don’t wait for the perfect moment."
+  },
+  // أضف حتى 30 اقتباس هنا
+];
 
-    const videos = JSON.parse(data);
-    const randomIndex = Math.floor(Math.random() * videos.length);
-    const selected = videos[randomIndex];
+app.get("/random-video", (req, res) => {
+  const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
-    // اقتباسات مؤقتة
-    const quotes = [
-      {
-        ar: "ثق بنفسك، فأنت أقوى مما تظن!",
-        en: "Believe in yourself — you're stronger than you think!"
-      },
-      {
-        ar: "النجاح يبدأ بخطوة، فابدأ الآن!",
-        en: "Success begins with a step — start now!"
-      }
-    ];
-    const quote = quotes[Math.floor(Math.random() * quotes.length)];
-
-    res.json({
-      title: selected.title,
-      video_url: selected.video_url,
-      quote_ar: quote.ar,
-      quote_en: quote.en
-    });
+  res.json({
+    title: "فيديو تحفيزي",
+    video_url: randomVideo,
+    quote_ar: randomQuote.quote_ar,
+    quote_en: randomQuote.quote_en
   });
 });
 
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`API running on port ${port}`);
+  console.log(`API is running on port ${port}`);
 });
